@@ -1,0 +1,286 @@
+<div class="matches-page">
+  <div class="page-container">
+    
+    <!-- Page Header -->
+    <section class="page-header">
+      <div class="header-content">
+        <h1>⚔️ Histórico de Partidas</h1>
+        <p>Acompanhe todas as batalhas épicas da nossa fazenda</p>
+      </div>
+      
+      <!-- Match Stats Overview -->
+      <div class="stats-overview">
+        <div class="stat-card">
+          <span class="stat-icon">🎮</span>
+          <div class="stat-info">
+            <span class="stat-number">{{ totalMatches }}</span>
+            <span class="stat-label">Total de Partidas</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">🏆</span>
+          <div class="stat-info">
+            <span class="stat-number">{{ getWinRate() }}%</span>
+            <span class="stat-label">Taxa de Vitória</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">⏱️</span>
+          <div class="stat-info">
+            <span class="stat-number">{{ formatDuration(getAverageDurationFiltered()) }}</span>
+            <span class="stat-label">Duração Média</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">📊</span>
+          <div class="stat-info">
+            <span class="stat-number">{{ filteredMatches.length }}</span>
+            <span class="stat-label">Partidas Filtradas</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filters Section -->
+    <section class="filters-section">
+      <div class="filters-container">
+        
+        <!-- Game Mode Filter -->
+        <div class="filter-group">
+          <label class="filter-label">🎮 Modo de Jogo:</label>
+          <div class="filter-buttons">
+            <button 
+              *ngFor="let mode of gameModes"
+              class="filter-btn"
+              [class.active]="selectedGameMode === mode.value"
+              (click)="onGameModeFilter(mode.value)"
+            >
+              <span class="filter-icon">{{ mode.icon }}</span>
+              <span class="filter-text">{{ mode.label }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Time Filter -->
+        <div class="filter-group">
+          <label class="filter-label">📅 Período:</label>
+          <div class="filter-buttons">
+            <button 
+              *ngFor="let timeFilter of timeFilters"
+              class="filter-btn"
+              [class.active]="selectedTimeFilter === timeFilter.value"
+              (click)="onTimeFilter(timeFilter.value)"
+            >
+              {{ timeFilter.label }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Result Filter -->
+        <div class="filter-group">
+          <label class="filter-label">🏁 Resultado:</label>
+          <div class="filter-buttons">
+            <button 
+              *ngFor="let resultFilter of resultFilters"
+              class="filter-btn"
+              [class.active]="selectedResult === resultFilter.value"
+              (click)="onResultFilter(resultFilter.value)"
+            >
+              {{ resultFilter.label }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Player Search -->
+        <div class="filter-group">
+          <label class="filter-label">🔍 Buscar Jogador:</label>
+          <div class="search-container">
+            <input 
+              type="text" 
+              placeholder="Digite o nome do jogador..."
+              (input)="onPlayerSearch($event)"
+              class="search-input"
+            />
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Matches List -->
+    <section class="matches-section">
+      <div class="matches-header">
+        <h2>📋 Partidas ({{ filteredMatches.length }})</h2>
+      </div>
+      
+      <div class="matches-list">
+        <div 
+          *ngFor="let match of filteredMatches" 
+          class="match-card"
+          [class]="getResultClass(match.winner)"
+        >
+          <!-- Match Header -->
+          <div class="match-header">
+            <div class="match-time">
+              <span class="time-ago">{{ getTimeAgo(match.gameCreation) }}</span>
+              <span class="exact-time">{{ match.gameCreation | date:'dd/MM HH:mm' }}</span>
+            </div>
+            
+            <div class="match-info">
+              <div class="game-mode">
+                <span class="mode-icon">{{ getGameModeIcon(match.gameMode) }}</span>
+                <span class="mode-name">{{ match.gameMode }}</span>
+              </div>
+              <div class="match-version">Patch {{ match.version }}</div>
+            </div>
+            
+            <div class="match-result">
+              <div class="result-badge" [class]="getResultClass(match.winner)">
+                {{ getResultLabel(match.winner) }}
+              </div>
+              <div class="match-duration" [class]="getDurationClass(match.gameDuration)">
+                {{ formatDuration(match.gameDuration) }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Match Details -->
+          <div class="match-details">
+            
+            <!-- Teams Section -->
+            <div class="teams-section">
+              
+              <!-- Blue Team -->
+              <div class="team blue-team">
+                <div class="team-header">
+                  <span class="team-name">🔵 Time Azul</span>
+                  <span class="team-result" *ngIf="match.winner === 'blue'">👑 Vitória</span>
+                </div>
+                <div class="team-players">
+                  <!-- Mock players for blue team -->
+                  <div class="player-slot">
+                    <div class="champion-info">
+                      <img src="https://ddragon.leagueoflegends.com/cdn/13.24.1/img/champion/Aatrox.png" alt="Champion" class="champion-icon" />
+                      <span class="champion-name">Aatrox</span>
+                    </div>
+                    <div class="player-info">
+                      <span class="player-name">Fazendeiro1</span>
+                      <span class="player-kda">12/3/8</span>
+                    </div>
+                    <div class="player-items">
+                      <div class="item-slot" *ngFor="let i of [1,2,3,4,5,6]">
+                        <img src="https://ddragon.leagueoflegends.com/cdn/13.24.1/img/item/{{ 1001 + i }}.png" alt="Item" class="item-icon" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="player-slot">
+                    <div class="champion-info">
+                      <img src="https://ddragon.leagueoflegends.com/cdn/13.24.1/img/champion/Graves.png" alt="Champion" class="champion-icon" />
+                      <span class="champion-name">Graves</span>
+                    </div>
+                    <div class="player-info">
+                      <span class="player-name">Fazendeiro2</span>
+                      <span class="player-kda">8/4/15</span>
+                    </div>
+                    <div class="player-items">
+                      <div class="item-slot" *ngFor="let i of [1,2,3,4,5,6]">
+                        <img src="https://ddragon.leagueoflegends.com/cdn/13.24.1/img/item/{{ 2001 + i }}.png" alt="Item" class="item-icon" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="more-players" *ngIf="match.gameMode !== 'ARAM'">
+                    <span>+3 jogadores</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- VS Divider -->
+              <div class="vs-divider">
+                <span class="vs-text">VS</span>
+              </div>
+
+              <!-- Red Team -->
+              <div class="team red-team">
+                <div class="team-header">
+                  <span class="team-name">🔴 Time Vermelho</span>
+                  <span class="team-result" *ngIf="match.winner === 'red'">👑 Vitória</span>
+                </div>
+                <div class="team-players">
+                  <!-- Mock players for red team -->
+                  <div class="player-slot">
+                    <div class="champion-info">
+                      <img src="https://ddragon.leagueoflegends.com/cdn/13.24.1/img/champion/Yasuo.png" alt="Champion" class="champion-icon" />
+                      <span class="champion-name">Yasuo</span>
+                    </div>
+                    <div class="player-info">
+                      <span class="player-name">Inimigo1</span>
+                      <span class="player-kda">5/8/4</span>
+                    </div>
+                    <div class="player-items">
+                      <div class="item-slot" *ngFor="let i of [1,2,3,4,5,6]">
+                        <img src="https://ddragon.leagueoflegends.com/cdn/13.24.1/img/item/{{ 3001 + i }}.png" alt="Item" class="item-icon" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="player-slot">
+                    <div class="champion-info">
+                      <img src="https://ddragon.leagueoflegends.com/cdn/13.24.1/img/champion/LeeSin.png" alt="Champion" class="champion-icon" />
+                      <span class="champion-name">Lee Sin</span>
+                    </div>
+                    <div class="player-info">
+                      <span class="player-name">Inimigo2</span>
+                      <span class="player-kda">3/10/7</span>
+                    </div>
+                    <div class="player-items">
+                      <div class="item-slot" *ngFor="let i of [1,2,3,4,5,6]">
+                        <img src="https://ddragon.leagueoflegends.com/cdn/13.24.1/img/item/{{ 4001 + i }}.png" alt="Item" class="item-icon" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="more-players" *ngIf="match.gameMode !== 'ARAM'">
+                    <span>+3 jogadores</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Match Actions -->
+            <div class="match-actions">
+              <button class="action-btn">
+                <span>📊</span>
+                Ver Detalhes
+              </button>
+              <button class="action-btn">
+                <span>📋</span>
+                Copiar Build
+              </button>
+              <button class="action-btn">
+                <span>🔗</span>
+                Compartilhar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Load More Button -->
+      <div class="load-more-section" *ngIf="filteredMatches.length > 0">
+        <button class="load-more-btn">
+          <span>⬇️</span>
+          Carregar Mais Partidas
+        </button>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="filteredMatches.length === 0" class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <h3>Nenhuma partida encontrada</h3>
+        <p>Tente ajustar os filtros para encontrar as partidas desejadas</p>
+        <button class="reset-filters-btn" (click)="selectedGameMode = 'all'; selectedTimeFilter = 'all'; selectedResult = 'all'; applyFilters()">
+          🔄 Limpar Filtros
+        </button>
+      </div>
+    </section>
+
+  </div>
+</div>

@@ -1,0 +1,203 @@
+<div class="rankings-page">
+  <div class="page-container">
+
+    <!-- Page Header -->
+    <section class="page-header">
+      <div class="header-content">
+        <h1>🏆 Rankings da Fazenda</h1>
+        <p>Veja quem são os melhores fazendeiros em diferentes categorias</p>
+      </div>
+
+      <!-- Season Overview -->
+      <div class="season-overview">
+        <div class="season-header">
+          <h2>📊 Temporada Atual</h2>
+          <span class="season-badge">Season 2024</span>
+        </div>
+        <div class="season-stats">
+          <div class="season-stat">
+            <span class="stat-icon">🎮</span>
+            <div class="stat-info">
+              <span class="stat-number">{{ seasonStats.totalGames }}</span>
+              <span class="stat-label">Partidas Totais</span>
+            </div>
+          </div>
+          <div class="season-stat">
+            <span class="stat-icon">👥</span>
+            <div class="stat-info">
+              <span class="stat-number">{{ seasonStats.activePlayers }}</span>
+              <span class="stat-label">Jogadores Ativos</span>
+            </div>
+          </div>
+          <div class="season-stat">
+            <span class="stat-icon">⏱️</span>
+            <div class="stat-info">
+              <span class="stat-number">{{ formatDuration(seasonStats.avgGameDuration) }}</span>
+              <span class="stat-label">Duração Média</span>
+            </div>
+          </div>
+          <div class="season-stat">
+            <span class="stat-icon">👑</span>
+            <div class="stat-info">
+              <span class="stat-number">{{ seasonStats.topPerformer }}</span>
+              <span class="stat-label">Top Performer</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Leaderboard Selector -->
+    <section class="leaderboard-selector">
+      <h2>📈 Categorias de Ranking</h2>
+      <div class="category-grid">
+        <button
+          *ngFor="let category of leaderboardTypes"
+          class="category-card"
+          [class.active]="selectedLeaderboard?.type === category.type"
+          (click)="selectLeaderboard(category.type)"
+        >
+          <div class="category-icon">{{ category.icon }}</div>
+          <div class="category-info">
+            <h3 class="category-name">{{ category.name }}</h3>
+            <p class="category-description">{{ category.description }}</p>
+          </div>
+          <div class="category-arrow" *ngIf="selectedLeaderboard?.type === category.type">▶</div>
+        </button>
+      </div>
+    </section>
+
+    <!-- Current Leaderboard -->
+    <section class="current-leaderboard" *ngIf="selectedLeaderboard">
+      <div class="leaderboard-header">
+        <div class="leaderboard-title">
+          <span class="title-icon">{{ getLeaderboardInfo(selectedLeaderboard.type)?.icon }}</span>
+          <h2>Ranking: {{ getLeaderboardInfo(selectedLeaderboard.type)?.name }}</h2>
+        </div>
+        <div class="leaderboard-meta">
+          <span class="last-updated">Última atualização: {{ selectedLeaderboard.lastUpdated | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+      </div>
+
+      <!-- Top 3 Podium -->
+      <div class="podium-section" *ngIf="selectedLeaderboard.players.length >= 3">
+        <div class="podium">
+          <!-- Second Place -->
+          <div class="podium-place second-place" *ngIf="selectedLeaderboard.players[1]">
+            <div class="podium-rank">🥈</div>
+            <div class="podium-player">
+              <img [src]="selectedLeaderboard.players[1].avatar" [alt]="selectedLeaderboard.players[1].summonerName" class="podium-avatar" />
+              <h3 class="podium-name">{{ selectedLeaderboard.players[1].summonerName }}</h3>
+              <div class="podium-value">{{ formatValue(selectedLeaderboard.players[1].value, selectedLeaderboard.type) }}</div>
+            </div>
+            <div class="podium-base second"></div>
+          </div>
+
+          <!-- First Place -->
+          <div class="podium-place first-place" *ngIf="selectedLeaderboard.players[0]">
+            <div class="podium-crown">👑</div>
+            <div class="podium-rank">🥇</div>
+            <div class="podium-player">
+              <img [src]="selectedLeaderboard.players[0].avatar" [alt]="selectedLeaderboard.players[0].summonerName" class="podium-avatar champion" />
+              <h3 class="podium-name champion">{{ selectedLeaderboard.players[0].summonerName }}</h3>
+              <div class="podium-value champion">{{ formatValue(selectedLeaderboard.players[0].value, selectedLeaderboard.type) }}</div>
+            </div>
+            <div class="podium-base first"></div>
+          </div>
+
+          <!-- Third Place -->
+          <div class="podium-place third-place" *ngIf="selectedLeaderboard.players[2]">
+            <div class="podium-rank">🥉</div>
+            <div class="podium-player">
+              <img [src]="selectedLeaderboard.players[2].avatar" [alt]="selectedLeaderboard.players[2].summonerName" class="podium-avatar" />
+              <h3 class="podium-name">{{ selectedLeaderboard.players[2].summonerName }}</h3>
+              <div class="podium-value">{{ formatValue(selectedLeaderboard.players[2].value, selectedLeaderboard.type) }}</div>
+            </div>
+            <div class="podium-base third"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Full Rankings Table -->
+      <div class="rankings-table">
+        <div class="table-header">
+          <div class="header-cell rank-cell">Posição</div>
+          <div class="header-cell player-cell">Fazendeiro</div>
+          <div class="header-cell value-cell">{{ getLeaderboardInfo(selectedLeaderboard.type)?.name }}</div>
+          <div class="header-cell change-cell">Mudança</div>
+          <div class="header-cell trend-cell">Tendência</div>
+        </div>
+
+        <div class="table-body">
+          <div
+            *ngFor="let entry of selectedLeaderboard.players; let i = index"
+            class="table-row"
+            [class]="getRankClass(entry.rank)"
+          >
+            <div class="table-cell rank-cell">
+              <span class="rank-icon">{{ getRankIcon(entry.rank) }}</span>
+              <span class="rank-number">#{{ entry.rank }}</span>
+            </div>
+
+            <div class="table-cell player-cell">
+              <img [src]="entry.avatar" [alt]="entry.summonerName" class="player-avatar-small" />
+              <div class="player-info">
+                <span class="player-name">{{ entry.summonerName }}</span>
+                <span class="player-discord">{{ entry.discordUsername }}</span>
+              </div>
+            </div>
+
+            <div class="table-cell value-cell">
+              <span class="value-display" [class]="getPerformanceClass(entry, selectedLeaderboard.type)">
+                {{ formatValue(entry.value, selectedLeaderboard.type) }}
+              </span>
+            </div>
+
+            <div class="table-cell change-cell">
+              <span class="change-value" [class.positive]="entry.change > 0" [class.negative]="entry.change < 0">
+                {{ entry.change > 0 ? '+' : '' }}{{ entry.change }}
+                <span class="change-icon">{{ getChangeIcon(entry.change) }}</span>
+              </span>
+            </div>
+
+            <div class="table-cell trend-cell">
+              <div class="trend-indicator" [class]="getTrendIndicator(entry)">
+                <div class="trend-bar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Summary -->
+      <div class="stats-summary">
+        <h3>📊 Estatísticas Resumidas</h3>
+        <div class="summary-stats">          <div class="summary-stat">
+            <span class="summary-label">Média Geral:</span>
+            <span class="summary-value">
+              {{ getAverageValue() }}
+            </span>
+          </div>
+          <div class="summary-stat">
+            <span class="summary-label">Melhor Performance:</span>
+            <span class="summary-value">
+              {{ getTopPerformerValue() }}
+            </span>
+          </div>
+          <div class="summary-stat">
+            <span class="summary-label">Total de Participantes:</span>
+            <span class="summary-value">{{ selectedLeaderboard.players.length }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Empty State -->
+    <div *ngIf="!selectedLeaderboard" class="empty-state">
+      <div class="empty-icon">📊</div>
+      <h3>Selecione uma categoria</h3>
+      <p>Escolha uma categoria acima para ver o ranking</p>
+    </div>
+
+  </div>
+</div>

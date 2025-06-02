@@ -34,14 +34,12 @@ export class Dashboard implements OnInit {
 
     this.playerService.getPlayerStats().subscribe(stats => {
       this.totalMatches = stats.reduce((total, stat) => total + stat.totalGames, 0);
-    });
-
-    // Load events
-    this.playerService.getFarmEvents().subscribe(events => {
-      this.activeEvents = events.filter(e => e.status === 'upcoming' || e.status === 'ongoing').length;
+    });    // Load events
+    this.playerService.getEvents().subscribe((events: FarmEvent[]) => {
+      this.activeEvents = events.filter((e: FarmEvent) => e.status === 'upcoming' || e.status === 'ongoing').length;
       this.upcomingEvents = events
-        .filter(e => e.status === 'upcoming')
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+        .filter((e: FarmEvent) => e.status === 'upcoming')
+        .sort((a: FarmEvent, b: FarmEvent) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
         .slice(0, 3);
     });
 
@@ -141,10 +139,10 @@ export class Dashboard implements OnInit {
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   }
-
-  formatEventDate(date: Date): { day: string; month: string } {
-    const day = date.getDate().toString();
-    const month = date.toLocaleDateString('pt-BR', { month: 'short' });
+  formatEventDate(date: string): { day: string; month: string } {
+    const dateObj = new Date(date);
+    const day = dateObj.getDate().toString();
+    const month = dateObj.toLocaleDateString('pt-BR', { month: 'short' });
     return { day, month };
   }
 

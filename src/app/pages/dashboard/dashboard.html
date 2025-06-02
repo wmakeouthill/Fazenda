@@ -102,17 +102,16 @@
             <h2>📅 Próximos Eventos</h2>
             <a routerLink="/events" class="view-all-link">Ver todos</a>
           </div>
-          <div class="events-list">
-            <div *ngFor="let event of upcomingEvents" class="event-item">
+          <div class="events-list">            <div *ngFor="let event of upcomingEvents" class="event-item">
               <div class="event-date">
-                <span class="day">{{ formatEventDate(event.date).day }}</span>
-                <span class="month">{{ formatEventDate(event.date).month }}</span>
+                <span class="day">{{ formatEventDate(event.startDate).day }}</span>
+                <span class="month">{{ formatEventDate(event.startDate).month }}</span>
               </div>
               <div class="event-info">
-                <div class="event-title">{{ event.title }}</div>
+                <div class="event-title">{{ event.name }}</div>
                 <div class="event-type">{{ getEventTypeLabel(event.type) }}</div>
                 <div class="event-participants">
-                  {{ event.participants.length }}/{{ event.maxParticipants || '∞' }} participantes
+                  {{ event.participants?.length || 0 }}/{{ event.maxParticipants || '∞' }} participantes
                 </div>
               </div>
               <div class="event-status" [class]="event.status">

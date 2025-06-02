@@ -1,13 +1,16 @@
 import { Routes } from '@angular/router';
 import { Dashboard } from './pages/dashboard/dashboard';
+import { Players } from './pages/players/players';
+import { Rankings } from './pages/rankings/rankings';
+import { Matches } from './pages/matches/matches';
+import { Events } from './pages/events/events';
 
 export const routes: Routes = [
   { path: '', component: Dashboard },
   { path: 'dashboard', redirectTo: '', pathMatch: 'full' },
-  // Rotas serão adicionadas conforme os componentes forem criados
-  // { path: 'players', component: PlayersComponent },
-  // { path: 'leaderboards', component: LeaderboardsComponent },
-  // { path: 'matches', component: MatchesComponent },
-  // { path: 'events', component: EventsComponent },
+  { path: 'fazendeiros', component: Players },
+  { path: 'rankings', component: Rankings },
+  { path: 'partidas', component: Matches },
+  { path: 'eventos', component: Events },
   { path: '**', redirectTo: '', pathMatch: 'full' }
 ];

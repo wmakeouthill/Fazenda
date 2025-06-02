@@ -1,0 +1,259 @@
+<div class="events-page">
+  <!-- Header com estatísticas -->
+  <div class="events-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <span class="icon">🎪</span>
+        Eventos da Fazenda
+      </h1>
+      <p class="page-subtitle">Participe dos eventos e desafios da nossa comunidade</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-info">
+          <div class="stat-value">{{ totalEvents }}</div>
+          <div class="stat-label">Total de Eventos</div>
+        </div>
+      </div>
+
+      <div class="stat-card active">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-info">
+          <div class="stat-value">{{ activeEvents }}</div>
+          <div class="stat-label">Em Andamento</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-info">
+          <div class="stat-value">{{ upcomingCount }}</div>
+          <div class="stat-label">Próximos Eventos</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-info">
+          <div class="stat-value">{{ totalParticipants }}</div>
+          <div class="stat-label">Participantes</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filters-section">
+    <div class="filters-container">
+      <!-- Filtro por tipo de evento -->
+      <div class="filter-group">
+        <label class="filter-label">Tipo de Evento</label>
+        <div class="filter-buttons">
+          <button
+            *ngFor="let type of eventTypes"
+            class="filter-btn"
+            [class.active]="selectedEventType === type.type"
+            [style.background-color]="selectedEventType === type.type ? type.color : ''"
+            (click)="onEventTypeFilter(type.type)">
+            <span class="filter-icon">{{ type.icon }}</span>
+            {{ type.name }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Filtro por status -->
+      <div class="filter-group">
+        <label class="filter-label">Status</label>
+        <select
+          class="filter-select"
+          [(ngModel)]="selectedStatus"
+          (change)="onStatusFilter(selectedStatus)">
+          <option *ngFor="let status of statusFilters" [value]="status.value">
+            {{ status.label }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Busca -->
+      <div class="filter-group">
+        <label class="filter-label">Buscar Evento</label>
+        <div class="search-container">
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Buscar por nome, descrição ou organizador..."
+            (input)="onSearch($event)">
+          <span class="search-icon">🔍</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Eventos em destaque -->
+  <div class="featured-events" *ngIf="ongoingEvents.length > 0">
+    <h2 class="section-title">
+      <span class="section-icon">🔥</span>
+      Eventos em Andamento
+    </h2>
+
+    <div class="featured-grid">
+      <div *ngFor="let event of ongoingEvents" class="featured-event">
+        <div class="event-badge ongoing">EM ANDAMENTO</div>
+        <div class="event-type" [style.background-color]="getEventTypeInfo(event.type).color">
+          {{ getEventTypeInfo(event.type).icon }}
+        </div>
+
+        <div class="event-content">
+          <h3 class="event-title">{{ event.name }}</h3>
+          <p class="event-description">{{ event.description }}</p>
+
+          <div class="event-details">
+            <div class="event-detail">
+              <span class="detail-icon">👤</span>
+              <span>{{ event.organizer }}</span>
+            </div>
+            <div class="event-detail">
+              <span class="detail-icon">👥</span>
+              <span>{{ event.participants?.length || 0 }}/{{ event.maxParticipants }} participantes</span>
+            </div>
+            <div class="event-detail">
+              <span class="detail-icon">🏆</span>
+              <span>{{ getRewardText(event.reward) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="event-actions">
+          <button
+            *ngIf="!isUserParticipating(event)"
+            class="btn-primary"
+            [disabled]="!canJoinEvent(event)"
+            (click)="joinEvent(event)">
+            Participar
+          </button>
+          <button
+            *ngIf="isUserParticipating(event)"
+            class="btn-secondary"
+            (click)="leaveEvent(event)">
+            Sair
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lista de eventos -->
+  <div class="events-list">
+    <h2 class="section-title">
+      <span class="section-icon">📋</span>
+      Todos os Eventos
+      <span class="event-count">({{ filteredEvents.length }})</span>
+    </h2>
+
+    <div class="events-grid">
+      <div *ngFor="let event of filteredEvents" class="event-card">
+        <div class="event-header">
+          <div class="event-type-badge" [style.background-color]="getEventTypeInfo(event.type).color">
+            <span class="type-icon">{{ getEventTypeInfo(event.type).icon }}</span>
+            <span class="type-name">{{ getEventTypeInfo(event.type).name }}</span>
+          </div>
+
+          <div class="event-status" [class]="getEventStatusClass(getEventStatus(event))">
+            {{ getEventStatus(event) === 'upcoming' ? 'PRÓXIMO' :
+               getEventStatus(event) === 'ongoing' ? 'EM ANDAMENTO' :
+               getEventStatus(event) === 'completed' ? 'CONCLUÍDO' : 'CANCELADO' }}
+          </div>
+        </div>
+
+        <div class="event-body">
+          <h3 class="event-title">{{ event.name }}</h3>
+          <p class="event-description">{{ event.description }}</p>
+
+          <div class="event-meta">
+            <div class="meta-item">
+              <span class="meta-icon">📅</span>
+              <span class="meta-text">{{ formatDateRange(event.startDate, event.endDate) }}</span>
+            </div>
+
+            <div class="meta-item">
+              <span class="meta-icon">👤</span>
+              <span class="meta-text">Organizado por {{ event.organizer }}</span>
+            </div>
+
+            <div class="meta-item">
+              <span class="meta-icon">👥</span>
+              <span class="meta-text">{{ event.participants?.length || 0 }}/{{ event.maxParticipants }} participantes</span>
+            </div>
+
+            <div class="meta-item" *ngIf="event.location">
+              <span class="meta-icon">📍</span>
+              <span class="meta-text">{{ event.location }}</span>
+            </div>
+
+            <div class="meta-item">
+              <span class="meta-icon">🏆</span>
+              <span class="meta-text">{{ getRewardText(event.reward) }}</span>
+            </div>
+          </div>
+
+          <div class="event-requirements" *ngIf="event.requirements?.length">
+            <h4 class="requirements-title">Requisitos:</h4>
+            <ul class="requirements-list">
+              <li *ngFor="let req of event.requirements">{{ req }}</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="event-footer">
+          <div class="event-countdown" *ngIf="getEventStatus(event) === 'upcoming'">
+            <span class="countdown-icon">⏰</span>
+            <span *ngIf="getDaysUntilEvent(event.startDate) > 0">
+              {{ getDaysUntilEvent(event.startDate) }} dias para começar
+            </span>
+            <span *ngIf="getDaysUntilEvent(event.startDate) === 0">
+              Começa hoje!
+            </span>
+          </div>
+
+          <div class="event-actions">
+            <button
+              *ngIf="!isUserParticipating(event) && getEventStatus(event) === 'upcoming'"
+              class="btn-primary"
+              [disabled]="!canJoinEvent(event)"
+              (click)="joinEvent(event)">
+              <span class="btn-icon">✅</span>
+              Participar
+            </button>
+
+            <button
+              *ngIf="isUserParticipating(event) && getEventStatus(event) === 'upcoming'"
+              class="btn-secondary"
+              (click)="leaveEvent(event)">
+              <span class="btn-icon">❌</span>
+              Sair
+            </button>
+
+            <button
+              *ngIf="getEventStatus(event) === 'completed'"
+              class="btn-info"
+              disabled>
+              <span class="btn-icon">📊</span>
+              Ver Resultados
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="filteredEvents.length === 0" class="empty-state">
+      <div class="empty-icon">🌾</div>
+      <h3 class="empty-title">Nenhum evento encontrado</h3>
+      <p class="empty-message">
+        Não há eventos que correspondam aos seus filtros.
+        Tente ajustar os critérios de busca.
+      </p>
+    </div>
+  </div>
+</div>

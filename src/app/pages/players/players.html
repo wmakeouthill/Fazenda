@@ -1,0 +1,187 @@
+<div class="players-page">
+  <div class="page-container">
+
+    <!-- Page Header -->
+    <section class="page-header">
+      <div class="header-content">
+        <h1>🚜 Fazendeiros da LoL</h1>
+        <p>Conheça todos os membros da nossa comunidade agrícola de League of Legends</p>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="header-stats">
+        <div class="stat-card">
+          <span class="stat-icon">👥</span>
+          <div class="stat-info">
+            <span class="stat-number">{{ totalPlayers }}</span>
+            <span class="stat-label">Total de Fazendeiros</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">🌱</span>
+          <div class="stat-info">
+            <span class="stat-number">{{ activePlayers }}</span>
+            <span class="stat-label">Ativos</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">🏆</span>
+          <div class="stat-info">
+            <span class="stat-number">{{ averageWinRate }}%</span>
+            <span class="stat-label">WR Média</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">🌾</span>
+          <div class="stat-info">
+            <span class="stat-number">{{ totalFarmPoints }}</span>
+            <span class="stat-label">Farm Points Total</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filters and Search -->
+    <section class="filters-section">
+      <div class="search-container">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            placeholder="Buscar fazendeiro..."
+            (input)="onSearch($event)"
+            class="search-input"
+          />
+        </div>
+      </div>
+
+      <div class="filters-container">
+        <!-- Role Filter -->
+        <div class="filter-group">
+          <label class="filter-label">Posição:</label>
+          <div class="role-filters">
+            <button
+              *ngFor="let role of roles"
+              class="role-filter-btn"
+              [class.active]="selectedRole === role.value"
+              (click)="onRoleFilter(role.value)"
+            >
+              <span class="role-icon">{{ role.icon }}</span>
+              <span class="role-label">{{ role.label }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Sort Options -->
+        <div class="filter-group">
+          <label class="filter-label">Ordenar por:</label>
+          <div class="sort-buttons">
+            <button
+              *ngFor="let option of sortOptions"
+              class="sort-btn"
+              [class.active]="sortBy === option.value"
+              (click)="onSort(option.value)"
+            >
+              {{ option.label }}
+              <span class="sort-indicator" *ngIf="sortBy === option.value">
+                {{ sortOrder === 'asc' ? '↑' : '↓' }}
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Players Grid -->
+    <section class="players-section">
+      <div class="players-grid">
+        <div
+          *ngFor="let player of filteredPlayers; let i = index"
+          class="player-card"
+          [class]="getPlayerStatusClass(player)"
+        >
+          <!-- Player Header -->
+          <div class="player-header">
+            <div class="player-avatar-container">
+              <img [src]="player.avatar" [alt]="player.summonerName" class="player-avatar" />
+              <div class="player-status-indicator" [class.active]="player.isActive"></div>
+            </div>
+            <div class="player-basic-info">
+              <h3 class="player-name">{{ player.summonerName }}</h3>
+              <p class="discord-name">{{ player.discordUsername }}</p>              <div class="player-rank" [style.color]="getRankColor(player.currentRank || player.rank)">
+                {{ player.currentRank || player.rank }} {{ player.currentTier || player.tier }}
+              </div>
+            </div>
+            <div class="player-farm-points">
+              <span class="farm-points-number">{{ player.stats?.farmPoints || 0 }}</span>
+              <span class="farm-points-label">🌾 Farm Points</span>
+            </div>
+          </div>
+
+          <!-- Player Stats -->
+          <div class="player-stats">
+            <div class="stats-row">
+              <div class="stat-item">
+                <span class="stat-label">Taxa de Vitória</span>
+                <span class="stat-value winrate">{{ player.stats?.winRate || 0 }}%</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Partidas</span>
+                <span class="stat-value">{{ player.stats?.totalGames || 0 }}</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">KDA Médio</span>
+                <span class="stat-value kda">{{ player.stats?.averageKDA || '0.00' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Preferred Roles -->
+          <div class="player-roles">
+            <span class="roles-label">Posições Preferidas:</span>
+            <div class="roles-list">
+              <span
+                *ngFor="let role of player.preferredRoles"
+                class="role-tag"
+              >
+                {{ getRoleIcon(role) }} {{ role.toUpperCase() }}
+              </span>
+            </div>
+          </div>          <!-- Main Champions -->
+          <div class="player-champions" *ngIf="player.stats && player.stats.mainChampions && player.stats.mainChampions.length > 0">
+            <span class="champions-label">Campeões Principais:</span>
+            <div class="champions-list">
+              <div
+                *ngFor="let champion of player.stats.mainChampions.slice(0, 3)"
+                class="champion-item"
+              ><img [src]="champion.championIcon" [alt]="champion.championName" class="champion-icon" />
+                <span class="champion-name">{{ champion.championName }}</span>
+                <span class="champion-winrate">{{ champion.winRate }}%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Player Footer -->
+          <div class="player-footer">
+            <div class="last-seen">
+              <span class="last-seen-label">Última atividade:</span>
+              <span class="last-seen-value">{{ formatLastSeen(player.lastSeen) }}</span>
+            </div>
+            <button class="view-profile-btn">
+              <span>👁️</span>
+              Ver Perfil
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="filteredPlayers.length === 0" class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <h3>Nenhum fazendeiro encontrado</h3>
+        <p>Tente ajustar os filtros ou termo de busca</p>
+      </div>
+    </section>
+
+  </div>
+</div>

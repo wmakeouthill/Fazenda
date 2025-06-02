@@ -8,7 +8,11 @@ export interface Player {
   farmRank: number;
   avatar?: string;
   joinDate: Date;
+  lastSeen: Date;
   isActive: boolean;
+  preferredRoles: string[];
+  currentRank?: string;
+  currentTier?: string;
 }
 
 export interface ChampionStats {
@@ -46,6 +50,7 @@ export interface PlayerStats {
   averageGameDuration: number;
   favoriteRole: string;
   championStats: ChampionStats[];
+  mainChampions: ChampionStats[];
   currentStreak: number;
   longestWinStreak: number;
   longestLossStreak: number;
@@ -105,12 +110,14 @@ export interface Leaderboard {
   type: 'winRate' | 'kda' | 'farmPoints' | 'mvp' | 'streak';
   title: string;
   players: LeaderboardEntry[];
+  lastUpdated: Date;
 }
 
 export interface LeaderboardEntry {
   rank: number;
   playerId: string;
   summonerName: string;
+  discordUsername: string;
   avatar?: string;
   value: number;
   displayValue: string;
@@ -119,13 +126,35 @@ export interface LeaderboardEntry {
 
 export interface FarmEvent {
   id: string;
-  type: 'tournament' | 'scrim' | 'fun' | 'ranked';
-  title: string;
+  name: string;
   description: string;
-  date: Date;
-  participants: string[];
-  maxParticipants?: number;
-  status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
-  prize?: string;
+  type: EventType;
+  startDate: string;
+  endDate: string;
+  organizer: string;
+  location?: string;
+  maxParticipants: number;
+  participants?: EventParticipant[];
+  requirements?: string[];
+  reward: EventReward;
+  status: EventStatus;
   rules?: string[];
+  tags?: string[];
+}
+
+export type EventType = 'tournament' | 'workshop' | 'harvest' | 'community' | 'seasonal' | 'challenge';
+export type EventStatus = 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
+
+export interface EventParticipant {
+  playerId: string;
+  summonerName: string;
+  joinDate: string;
+  status: 'confirmed' | 'pending' | 'declined';
+}
+
+export interface EventReward {
+  farmPoints?: number;
+  title?: string;
+  item?: string;
+  description?: string;
 }

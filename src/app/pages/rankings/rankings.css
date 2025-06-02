@@ -1,0 +1,684 @@
+.rankings-page {
+  min-height: 100vh;
+  padding: 2rem 0;
+}
+
+.page-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Page Header */
+.page-header {
+  margin-bottom: 3rem;
+}
+
+.header-content h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  background: linear-gradient(45deg, var(--lol-gold), var(--farm-corn), var(--primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-family: var(--font-gaming);
+}
+
+.header-content p {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+/* Season Overview */
+.season-overview {
+  background: var(--surface);
+  border: 2px solid var(--primary);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.season-overview::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(74, 124, 89, 0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.season-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.season-header h2 {
+  font-size: 1.8rem;
+  color: var(--text-primary);
+  font-family: var(--font-gaming);
+}
+
+.season-badge {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(45deg, var(--lol-gold), var(--farm-corn));
+  color: white;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.season-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.season-stat {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.season-stat .stat-icon {
+  font-size: 2rem;
+}
+
+.season-stat .stat-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.season-stat .stat-number {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--lol-gold);
+  font-family: var(--font-gaming);
+}
+
+.season-stat .stat-label {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* Leaderboard Selector */
+.leaderboard-selector {
+  margin-bottom: 3rem;
+}
+
+.leaderboard-selector h2 {
+  font-size: 2rem;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  font-family: var(--font-gaming);
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.category-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  position: relative;
+}
+
+.category-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.category-card.active {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: white;
+  box-shadow: var(--shadow-lg);
+}
+
+.category-icon {
+  font-size: 2.5rem;
+}
+
+.category-info {
+  flex: 1;
+}
+
+.category-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0 0 0.5rem 0;
+  font-family: var(--font-gaming);
+}
+
+.category-description {
+  font-size: 0.9rem;
+  margin: 0;
+  opacity: 0.8;
+}
+
+.category-arrow {
+  font-size: 1.5rem;
+  color: white;
+}
+
+/* Current Leaderboard */
+.current-leaderboard {
+  margin-bottom: 2rem;
+}
+
+.leaderboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--border);
+}
+
+.leaderboard-title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.title-icon {
+  font-size: 2rem;
+}
+
+.leaderboard-title h2 {
+  font-size: 2rem;
+  color: var(--text-primary);
+  margin: 0;
+  font-family: var(--font-gaming);
+}
+
+.leaderboard-meta {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* Podium Section */
+.podium-section {
+  margin-bottom: 3rem;
+  padding: 2rem;
+  background: var(--surface);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+}
+
+.podium {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.podium-place {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+}
+
+.podium-crown {
+  position: absolute;
+  top: -40px;
+  font-size: 2rem;
+  animation: float 2s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.podium-rank {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.podium-player {
+  margin-bottom: 1rem;
+}
+
+.podium-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 3px solid var(--border);
+  margin-bottom: 0.5rem;
+}
+
+.podium-avatar.champion {
+  border-color: var(--lol-gold);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.podium-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0 0 0.5rem 0;
+  color: var(--text-primary);
+  font-family: var(--font-gaming);
+}
+
+.podium-name.champion {
+  color: var(--lol-gold);
+}
+
+.podium-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--text-secondary);
+  font-family: var(--font-gaming);
+}
+
+.podium-value.champion {
+  color: var(--lol-gold);
+  font-size: 2rem;
+}
+
+.podium-base {
+  width: 120px;
+  border-radius: 8px 8px 0 0;
+}
+
+.podium-base.first {
+  height: 100px;
+  background: linear-gradient(45deg, var(--lol-gold), #DAA520);
+}
+
+.podium-base.second {
+  height: 80px;
+  background: linear-gradient(45deg, #C0C0C0, #A0A0A0);
+}
+
+.podium-base.third {
+  height: 60px;
+  background: linear-gradient(45deg, #CD7F32, #B87333);
+}
+
+/* Rankings Table */
+.rankings-table {
+  background: var(--surface);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: 120px 1fr 150px 120px 100px;
+  background: linear-gradient(45deg, var(--primary), var(--primary-light));
+  color: white;
+  font-weight: bold;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.header-cell {
+  padding: 1rem;
+  text-align: center;
+}
+
+.header-cell.player-cell {
+  text-align: left;
+}
+
+.table-body {
+  background: var(--surface);
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: 120px 1fr 150px 120px 100px;
+  border-bottom: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+
+.table-row:hover {
+  background: rgba(74, 124, 89, 0.1);
+}
+
+.table-row.rank-first {
+  background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), transparent);
+}
+
+.table-row.rank-second {
+  background: linear-gradient(90deg, rgba(192, 192, 192, 0.1), transparent);
+}
+
+.table-row.rank-third {
+  background: linear-gradient(90deg, rgba(205, 127, 50, 0.1), transparent);
+}
+
+.table-cell {
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-cell.player-cell {
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+.rank-cell {
+  gap: 0.5rem;
+}
+
+.rank-icon {
+  font-size: 1.5rem;
+}
+
+.rank-number {
+  font-weight: bold;
+  color: var(--text-primary);
+  font-family: var(--font-gaming);
+}
+
+.player-avatar-small {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+}
+
+.player-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.player-name {
+  font-weight: bold;
+  color: var(--text-primary);
+  font-family: var(--font-gaming);
+}
+
+.player-discord {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.value-display {
+  font-size: 1.2rem;
+  font-weight: bold;
+  font-family: var(--font-gaming);
+}
+
+.value-display.performance-excellent {
+  color: var(--lol-gold);
+}
+
+.value-display.performance-good {
+  color: var(--success);
+}
+
+.value-display.performance-average {
+  color: var(--text-secondary);
+}
+
+.value-display.performance-poor {
+  color: var(--error);
+}
+
+.change-value {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: bold;
+}
+
+.change-value.positive {
+  color: var(--success);
+}
+
+.change-value.negative {
+  color: var(--error);
+}
+
+.change-icon {
+  font-size: 0.9rem;
+}
+
+.trend-indicator {
+  width: 60px;
+  height: 20px;
+  background: var(--border);
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.trend-bar {
+  height: 100%;
+  border-radius: inherit;
+  transition: all 0.3s ease;
+}
+
+.trending-up-strong .trend-bar {
+  width: 100%;
+  background: linear-gradient(90deg, var(--success), #00FF00);
+}
+
+.trending-up .trend-bar {
+  width: 70%;
+  background: var(--success);
+}
+
+.trending-stable .trend-bar {
+  width: 50%;
+  background: var(--text-muted);
+}
+
+.trending-down .trend-bar {
+  width: 30%;
+  background: var(--error);
+}
+
+.trending-down-strong .trend-bar {
+  width: 10%;
+  background: linear-gradient(90deg, var(--error), #FF0000);
+}
+
+/* Stats Summary */
+.stats-summary {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem;
+}
+
+.stats-summary h3 {
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  font-family: var(--font-gaming);
+}
+
+.summary-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.summary-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.summary-label {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.summary-value {
+  color: var(--lol-gold);
+  font-weight: bold;
+  font-family: var(--font-gaming);
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-muted);
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+}
+
+.empty-state p {
+  font-size: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .table-header,
+  .table-row {
+    grid-template-columns: 100px 1fr 120px 100px 80px;
+  }
+  
+  .header-cell,
+  .table-cell {
+    padding: 0.75rem;
+  }
+  
+  .podium {
+    gap: 1rem;
+  }
+  
+  .podium-base {
+    width: 100px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    padding: 0 1rem;
+  }
+  
+  .header-content h1 {
+    font-size: 2.5rem;
+  }
+  
+  .season-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  
+  .season-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .category-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .leaderboard-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  
+  .podium {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .podium-place {
+    order: 0;
+  }
+  
+  .first-place {
+    order: 1;
+  }
+  
+  .second-place {
+    order: 2;
+  }
+  
+  .third-place {
+    order: 3;
+  }
+  
+  .table-header,
+  .table-row {
+    grid-template-columns: 80px 1fr 100px 80px;
+  }
+  
+  .header-cell.trend-cell,
+  .table-cell.trend-cell {
+    display: none;
+  }
+  
+  .summary-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .season-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .season-stat {
+    padding: 0.75rem;
+  }
+  
+  .table-header,
+  .table-row {
+    grid-template-columns: 60px 1fr 80px;
+  }
+  
+  .header-cell.change-cell,
+  .table-cell.change-cell {
+    display: none;
+  }
+  
+  .player-avatar-small {
+    width: 40px;
+    height: 40px;
+  }
+}
