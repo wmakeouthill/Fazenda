@@ -1,0 +1,149 @@
+<div class="dashboard">
+  <div class="dashboard-container">
+
+    <!-- Welcome Section -->
+    <section class="welcome-section">
+      <div class="welcome-card card">
+        <div class="welcome-content">
+          <h1>🌾 Bem-vindo à Fazenda LoL! ⚔️</h1>
+          <p>Acompanhe as estatísticas da nossa comunidade de League of Legends</p>
+          <div class="quick-stats">
+            <div class="stat-item">
+              <span class="stat-number">{{ totalPlayers }}</span>
+              <span class="stat-label">Fazendeiros Ativos</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">{{ totalMatches }}</span>
+              <span class="stat-label">Partidas Jogadas</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">{{ activeEvents }}</span>
+              <span class="stat-label">Eventos Ativos</span>
+            </div>
+          </div>
+        </div>
+        <div class="welcome-visual">
+          <div class="farm-animation">
+            <span class="emoji">🚜</span>
+            <span class="emoji">🌱</span>
+            <span class="emoji">⚔️</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Content Grid -->
+    <div class="dashboard-grid">
+
+      <!-- Top Players -->
+      <section class="top-players-section">
+        <div class="card">
+          <div class="card-header">
+            <h2>🏆 Top Fazendeiros</h2>
+            <span class="subtitle">Ranking por Farm Points</span>
+          </div>
+          <div class="top-players-list">
+            <div
+              *ngFor="let player of topPlayers; let i = index"
+              class="player-item"
+              [class.champion]="i === 0"
+            >
+              <div class="player-rank">
+                <span class="rank-number" [class.gold]="i === 0" [class.silver]="i === 1" [class.bronze]="i === 2">
+                  #{{ i + 1 }}
+                </span>
+              </div>
+              <div class="player-avatar">
+                <img [src]="player.avatar" [alt]="player.summonerName" />
+              </div>
+              <div class="player-info">
+                <div class="player-name">{{ player.summonerName }}</div>
+                <div class="player-stats">
+                  <span class="farm-points">{{ player.farmPoints }} 🌾</span>
+                  <span class="win-rate">{{ player.winRate }}% WR</span>
+                </div>
+              </div>
+              <div class="player-badge" *ngIf="i < 3">
+                <span class="badge-emoji">{{ getBadgeEmoji(i) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recent Matches -->
+      <section class="recent-matches-section">
+        <div class="card">
+          <div class="card-header">
+            <h2>⚔️ Partidas Recentes</h2>
+            <a routerLink="/matches" class="view-all-link">Ver todas</a>
+          </div>
+          <div class="matches-list">
+            <div *ngFor="let match of recentMatches" class="match-item">
+              <div class="match-time">
+                <span>{{ getTimeAgo(match.gameCreation) }}</span>
+              </div>
+              <div class="match-info">
+                <div class="match-type">{{ match.gameMode }}</div>
+                <div class="match-duration">{{ formatDuration(match.gameDuration) }}</div>
+              </div>
+              <div class="match-result" [class.victory]="match.winner === 'blue'" [class.defeat]="match.winner === 'red'">
+                <span>{{ match.winner === 'blue' ? 'Vitória' : 'Derrota' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Upcoming Events -->
+      <section class="events-section">
+        <div class="card">
+          <div class="card-header">
+            <h2>📅 Próximos Eventos</h2>
+            <a routerLink="/events" class="view-all-link">Ver todos</a>
+          </div>
+          <div class="events-list">
+            <div *ngFor="let event of upcomingEvents" class="event-item">
+              <div class="event-date">
+                <span class="day">{{ formatEventDate(event.date).day }}</span>
+                <span class="month">{{ formatEventDate(event.date).month }}</span>
+              </div>
+              <div class="event-info">
+                <div class="event-title">{{ event.title }}</div>
+                <div class="event-type">{{ getEventTypeLabel(event.type) }}</div>
+                <div class="event-participants">
+                  {{ event.participants.length }}/{{ event.maxParticipants || '∞' }} participantes
+                </div>
+              </div>
+              <div class="event-status" [class]="event.status">
+                {{ getEventStatusLabel(event.status) }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Farm Leaderboard Preview -->
+      <section class="farm-leaderboard-section">
+        <div class="card">
+          <div class="card-header">
+            <h2>🌾 Farm Leaderboard</h2>
+            <a routerLink="/leaderboards" class="view-all-link">Ver ranking completo</a>
+          </div>
+          <div class="leaderboard-preview">
+            <div *ngFor="let entry of farmLeaderboard; let i = index" class="leaderboard-item">
+              <span class="position">#{{ entry.rank }}</span>
+              <img [src]="entry.avatar" [alt]="entry.summonerName" class="player-avatar-small" />
+              <span class="player-name">{{ entry.summonerName }}</span>
+              <span class="points">{{ entry.displayValue }}</span>
+              <span class="change" [class.positive]="entry.change > 0" [class.negative]="entry.change < 0">
+                {{ entry.change > 0 ? '+' : '' }}{{ entry.change }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
